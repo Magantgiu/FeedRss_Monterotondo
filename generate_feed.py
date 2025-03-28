@@ -5,15 +5,21 @@ from feedgen.feed import FeedGenerator
 import os
 
 def setup_logging():
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.FileHandler('rss_generator.log', encoding='utf-8'),
-            logging.StreamHandler()
-        ]
-    )
-    return logging.getLogger(__name__)
+    try:
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(levelname)s - %(message)s',
+            handlers=[
+                logging.FileHandler('rss_generator.log', encoding='utf-8'),
+                logging.StreamHandler()
+            ]
+        )
+        logger = logging.getLogger(__name__)
+        logger.info("Logging is set up.")
+        return logger
+    except Exception as e:
+        print(f"Failed to set up logging: {e}")
+        raise
 
 def generate_rss_feed(input_csv_path, output_rss_path):
     logger = setup_logging()
@@ -51,6 +57,7 @@ def generate_rss_feed(input_csv_path, output_rss_path):
                     entry.pubDate(parsed_date)
                     entry.description(f"{row['MITTENTE']} - {row['DATA_ATTO_ORIGINALE']}")
                     entries_added += 1
+                    logger.info(f"Added entry: {row['OGGETTO']}")
                 except KeyError as ke:
                     logger.error(f"Missing key in CSV row: {ke}")
                 except Exception as e:
