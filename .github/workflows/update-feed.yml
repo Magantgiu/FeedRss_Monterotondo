@@ -12,7 +12,8 @@ jobs:
         run: wget https://comune.monterotondo.rm.it/albo.csv -O albo.csv
       - name: Genera feed RSS
         run: python generate_feed.py
-      - uses: peaceiris/actions-gh-pages@v3
+      - name: Pubblica su GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
