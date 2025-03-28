@@ -2,16 +2,27 @@ name: Aggiorna Feed RSS
 on:
   schedule:
     - cron: '0 8 * * *'
+  workflow_dispatch:
+
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      - name: Install dependencies
+        run: pip install feedgen
+      
       - name: Genera feed RSS
         run: python generate_feed.py
-      - name: Pubblica su GitHub Pages
+      
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
+          publish_dir: ./docs
