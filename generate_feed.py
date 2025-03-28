@@ -102,7 +102,7 @@ def generate_rss_feed(input_csv_path, output_rss_path):
 def main():
     """Main function to generate RSS feed."""
     input_csv_path = 'albopretorio.csv'
-    output_rss_path = 'feed.xml'
+    output_rss_path = 'docs/feed.xml'
     generate_rss_feed(input_csv_path, output_rss_path)
 
 if __name__ == '__main__':
