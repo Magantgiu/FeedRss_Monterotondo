@@ -8,8 +8,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
-      - name: Scarica dati CSV
-        run: wget https://comune.monterotondo.rm.it/albo.csv -O albo.csv
       - name: Genera feed RSS
         run: python generate_feed.py
       - name: Pubblica su GitHub Pages
