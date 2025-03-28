@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import csv
 import logging
 from datetime import datetime
@@ -8,7 +5,6 @@ from feedgen.feed import FeedGenerator
 import os
 
 def setup_logging():
-    """Configure logging for the RSS feed generation process."""
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s',
@@ -20,78 +16,52 @@ def setup_logging():
     return logging.getLogger(__name__)
 
 def generate_rss_feed(input_csv_path, output_rss_path):
-    """
-    Generate an RSS feed from a CSV file.
-    
-    :param input_csv_path: Path to the input CSV file
-    :param output_rss_path: Path to save the output RSS XML file
-    """
     logger = setup_logging()
-    
     try:
-        # Create feed generator
         fg = FeedGenerator()
         fg.title('Albo Pretorio Monterotondo')
         fg.link(href='https://servizionline.hspromilaprod.hypersicapp.net/cmsmonterotondo/portale/albopretorio/albopretorioconsultazione.aspx?P=400')
         fg.description('Feed RSS ufficiale degli avvisi pubblici')
         fg.language('it')
-        
-        # Read CSV and add entries
+
         entries_added = 0
         with open(input_csv_path, 'r', encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile)
-            
-            # Validate required columns
-            required_columns = ['Titolo', 'URL', 'Data', 'Descrizione']
+            required_columns = ['DATA_INIZIO_PUBBLICAZIONE', 'OGGETTO', 'MITTENTE', 'DATA_ATTO_ORIGINALE']
             if not all(col in reader.fieldnames for col in required_columns):
                 raise ValueError(f"CSV is missing one or more required columns: {required_columns}")
-            
-            # Process each row
+
             for row in reader:
                 try:
-                    # Validate and parse date
-                    try:
-                        # Attempt to parse date in multiple common formats
-                        parse_formats = ['%Y-%m-%d', '%d/%m/%Y', '%d-%m-%Y', '%Y/%m/%d']
-                        parsed_date = None
-                        for date_format in parse_formats:
-                            try:
-                                parsed_date = datetime.strptime(row['Data'], date_format)
-                                break
-                            except ValueError:
-                                continue
-                        
-                        if not parsed_date:
-                            logger.warning(f"Could not parse date for entry: {row['Titolo']} - Date: {row['Data']}")
+                    parse_formats = ['%Y-%m-%d', '%d/%m/%Y', '%d-%m-%Y', '%Y/%m/%d']
+                    parsed_date = None
+                    for date_format in parse_formats:
+                        try:
+                            parsed_date = datetime.strptime(row['DATA_INIZIO_PUBBLICAZIONE'], date_format)
+                            break
+                        except ValueError:
                             continue
-                    except Exception as date_error:
-                        logger.error(f"Error parsing date for {row['Titolo']}: {date_error}")
+                    if not parsed_date:
+                        logger.warning(f"Could not parse date for entry: {row['OGGETTO']} - Date: {row['DATA_INIZIO_PUBBLICAZIONE']}")
                         continue
-                    
-                    # Create feed entry
+
                     entry = fg.add_entry()
-                    entry.title(row['Titolo'])
-                    entry.link(href=row['URL'])
+                    entry.title(row['OGGETTO'])
+                    entry.link(href='https://servizionline.hspromilaprod.hypersicapp.net/cmsmonterotondo/portale/albopretorio/albopretorioconsultazione.aspx?P=400')  # Update this with the actual URL if available
                     entry.pubDate(parsed_date)
-                    entry.description(row['Descrizione'])
-                    
+                    entry.description(f"{row['MITTENTE']} - {row['DATA_ATTO_ORIGINALE']}")
                     entries_added += 1
-                
                 except KeyError as ke:
                     logger.error(f"Missing key in CSV row: {ke}")
                 except Exception as e:
                     logger.error(f"Error processing row: {e}")
-        
-        # Ensure output directory exists
+
         os.makedirs(os.path.dirname(output_rss_path), exist_ok=True)
-        
-        # Generate RSS feed files
         fg.rss_file(output_rss_path)
         fg.atom_file(output_rss_path.replace('.xml', '_atom.xml'))
-        
+
         logger.info(f"RSS feed generated successfully. Total entries: {entries_added}")
         logger.info(f"Output files: {output_rss_path} and {output_rss_path.replace('.xml', '_atom.xml')}")
-    
     except FileNotFoundError:
         logger.error(f"Input CSV file not found: {input_csv_path}")
     except PermissionError:
@@ -100,7 +70,6 @@ def generate_rss_feed(input_csv_path, output_rss_path):
         logger.error(f"Unexpected error in RSS feed generation: {e}")
 
 def main():
-    """Main function to generate RSS feed."""
     input_csv_path = 'albopretorio.csv'
     output_rss_path = 'docs/feed.xml'
     generate_rss_feed(input_csv_path, output_rss_path)
