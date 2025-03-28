@@ -5,23 +5,18 @@ from feedgen.feed import FeedGenerator
 import os
 
 def setup_logging():
-    try:
-        logging.basicConfig(
-            level=logging.INFO,
-            format='%(asctime)s - %(levelname)s - %(message)s',
-            handlers=[
-                logging.FileHandler('rss_generator.log', encoding='utf-8'),
-                logging.StreamHandler()
-            ]
-        )
-        logger = logging.getLogger(__name__)
-        logger.info("Logging is set up.")
-        return logger
-    except Exception as e:
-        print(f"Failed to set up logging: {e}")
-        raise
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler('rss_generator.log', encoding='utf-8'),
+            logging.StreamHandler()
+        ]
+    )
+    return logging.getLogger(__name__)
 
 def generate_rss_feed(input_csv_path, output_rss_path):
+    import pdb; pdb.set_trace()  # Aggiungi questo per iniziare il debug qui
     logger = setup_logging()
     try:
         fg = FeedGenerator()
@@ -53,7 +48,7 @@ def generate_rss_feed(input_csv_path, output_rss_path):
 
                     entry = fg.add_entry()
                     entry.title(row['OGGETTO'])
-                    entry.link(href='https://servizionline.hspromilaprod.hypersicapp.net/cmsmonterotondo/portale/albopretorio/albopretorioconsultazione.aspx?P=400')  # Update this with the actual URL if available
+                    entry.link(href='https://servizionline.hspromilaprod.hypersicapp.net/cmsmonterotondo/portale/albopretorio/albopretorioconsultazione.aspx?P=400')
                     entry.pubDate(parsed_date)
                     entry.description(f"{row['MITTENTE']} - {row['DATA_ATTO_ORIGINALE']}")
                     entries_added += 1
