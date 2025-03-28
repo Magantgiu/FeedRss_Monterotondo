@@ -32,7 +32,7 @@ def generate_rss_feed(input_csv_path, output_rss_path):
         # Create feed generator
         fg = FeedGenerator()
         fg.title('Albo Pretorio Monterotondo')
-        fg.link(href='https://comune.monterotondo.rm.it/albo')
+        fg.link(href='https://servizionline.hspromilaprod.hypersicapp.net/cmsmonterotondo/portale/albopretorio/albopretorioconsultazione.aspx?P=400')
         fg.description('Feed RSS ufficiale degli avvisi pubblici')
         fg.language('it')
         
@@ -102,7 +102,7 @@ def generate_rss_feed(input_csv_path, output_rss_path):
 def main():
     """Main function to generate RSS feed."""
     input_csv_path = 'albopretorio.csv'
-    output_rss_path = './docs/feed.xml'
+    output_rss_path = 'feed.xml'
     generate_rss_feed(input_csv_path, output_rss_path)
 
 if __name__ == '__main__':
