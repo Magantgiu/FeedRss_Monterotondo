@@ -1,4 +1,5 @@
-# Esempio minimo
+plugins:
+  - jekyll-feed
 title: Albo Pretorio Monterotondo
 description: Feed RSS ufficiale
-url: https://comune.monterotondo.rm.it/albo
+url: https://servizionline.hspromilaprod.hypersicapp.net/cmsmonterotondo/portale/albopretorio/albopretorioconsultazione.aspx?P=400
