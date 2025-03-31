@@ -47,8 +47,11 @@ jobs:
       
       - name: Prepara directory per GH Pages
         run: |
+          set -x  # Abilita il debug
           mkdir -p docs
           chmod 755 docs
+          echo "Contenuto della directory dopo la creazione di docs:"
+          ls -la
           # Cerca il file feed.xml nella directory corrente o nelle sottodirectory
           FILE_PATH=$(find . -name "feed.xml" -type f | head -n 1)
           
@@ -64,7 +67,10 @@ jobs:
           else
             echo "File feed.xml non trovato!"
             exit 1
-          
+          fi
+          echo "Contenuto della directory docs dopo la copia dei file:"
+          ls -la docs
+      
       - name: Commit e push dei file generati
         run: |
           git config --global user.name 'GitHub Actions'
