@@ -1,23 +1,23 @@
 import csv
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from feedgen.feed import FeedGenerator
 import os
 
-# def setup_logging():
-  #  logging.basicConfig(
-   #     level=logging.INFO,
-    #    format='%(asctime)s - %(levelname)s - %(message)s',
-     #   handlers=[
-      #      logging.FileHandler('rss_generator.log', encoding='utf-8'),
-       #     logging.StreamHandler()
-       # ]
-   # )
-    # return logging.getLogger(__name__)
+def setup_logging():
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler('rss_generator.log', encoding='utf-8'),
+            logging.StreamHandler()
+        ]
+    )
+    return logging.getLogger(__name__)
+
+logger = setup_logging()
 
 def generate_rss_feed(input_csv_path, output_rss_path):
-    # import pdb; pdb.set_trace()  # Aggiungi questo per iniziare il debug qui
-    # logger = setup_logging()
     try:
         fg = FeedGenerator()
         fg.title('Albo Pretorio Monterotondo')
@@ -27,7 +27,7 @@ def generate_rss_feed(input_csv_path, output_rss_path):
 
         entries_added = 0
         with open(input_csv_path, 'r', encoding='utf-8') as csvfile:
-            reader = csv.DictReader(csvfile, delimiter ='|')
+            reader = csv.DictReader(csvfile, delimiter='|')
             required_columns = ['DATA_INIZIO_PUBBLICAZIONE', 'OGGETTO', 'MITTENTE', 'DATA_ATTO_ORIGINALE']
             if not all(col in reader.fieldnames for col in required_columns):
                 raise ValueError(f"CSV is missing one or more required columns: {required_columns}")
@@ -39,6 +39,7 @@ def generate_rss_feed(input_csv_path, output_rss_path):
                     for date_format in parse_formats:
                         try:
                             parsed_date = datetime.strptime(row['DATA_INIZIO_PUBBLICAZIONE'], date_format)
+                            parsed_date = parsed_date.replace(tzinfo=timezone.utc)
                             break
                         except ValueError:
                             continue
