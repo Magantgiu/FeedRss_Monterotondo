@@ -113,7 +113,7 @@ def main():
     import os
     base_path = os.path.dirname(os.path.abspath(__file__))
     input_csv_path = os.path.join(base_path, 'albopretorio.csv')
-    output_rss_path = os.path.join(base_path, 'feed.xml')
+    output_rss_path = os.path.join(base_path, '/docs/feed.xml')
     
     # Stampa il percorso del file per debug
     print(f"Tentativo di leggere il file da: {input_csv_path}")
