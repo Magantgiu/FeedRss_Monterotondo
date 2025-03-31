@@ -27,7 +27,7 @@ def generate_rss_feed(input_csv_path, output_rss_path):
 
         entries_added = 0
         with open(input_csv_path, 'r', encoding='utf-8') as csvfile:
-            reader = csv.DictReader(csvfile)
+            reader = csv.DictReader(csvfile, delimiter ='|')
             required_columns = ['DATA_INIZIO_PUBBLICAZIONE', 'OGGETTO', 'MITTENTE', 'DATA_ATTO_ORIGINALE']
             if not all(col in reader.fieldnames for col in required_columns):
                 raise ValueError(f"CSV is missing one or more required columns: {required_columns}")
