@@ -23,20 +23,45 @@ jobs:
       - name: Install dependencies
         run: pip install feedgen
       
+      - name: Verifica la struttura delle directory e dei file
+        run: |
+          echo "Directory corrente: $(pwd)"
+          echo "Contenuto directory corrente:"
+          ls -la
+          echo "Verifico esistenza del CSV:"
+          ls -la | grep .csv || echo "Nessun file CSV trovato"
+      
       - name: Genera feed RSS
-        run: python generate_feed.py
+        run: |
+          python generate_feed.py
+          echo "Dopo l'esecuzione dello script:"
+          ls -la
       
       - name: Prepara directory per GH Pages
         run: |
           mkdir -p docs
-          cp feed.xml docs/
-          cp feed_atom.xml docs/ || true  # Non fallire se questo file non esiste
+          # Cerca il file feed.xml nella directory corrente o nelle sottodirectory
+          FILE_PATH=$(find . -name "feed.xml" -type f | head -n 1)
+          
+          if [ -n "$FILE_PATH" ]; then
+            echo "File trovato: $FILE_PATH"
+            cp "$FILE_PATH" docs/
+            
+            # Cerca anche feed_atom.xml nella stessa directory
+            ATOM_PATH="${FILE_PATH/feed.xml/feed_atom.xml}"
+            if [ -f "$ATOM_PATH" ]; then
+              cp "$ATOM_PATH" docs/
+            fi
+          else
+            echo "File feed.xml non trovato!"
+            exit 1
+          fi
       
       - name: Commit e push dei file generati
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'actions@github.com'
-          git add feed.xml docs/
+          git add -A
           git diff --staged --quiet || git commit -m "Aggiorna feed RSS: ${{ github.run_id }}"
           git push
       
