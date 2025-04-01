@@ -7,4 +7,4 @@
 - **Validazione**: Conforme agli standard RSS 2.0  
 
 ## 🛠️ Configurazione  
-1. **URL del feed**:  
+1. **URL del feed**: https://magantgiu.github.io/FeedRss_Monterotondo/feed_atom.xml
